@@ -192,6 +192,7 @@ let disk = (nu, nv) =>
     return [x, y, 0, 0, 0, 1];
   });
 
+/* The shapes  */
 let meshData = [
   {
     type: 1,
@@ -229,14 +230,13 @@ let vertexShader = `
           r+=sin(6.3*dot(P,fract(D)-.5))*pow(max(0.,1.-2.*dot(P,P)),4.);
          } return .5 * sin(r); }
 
-
        attribute vec3 aPos, aNor;
        uniform mat4 uMatrix, uInvMatrix;
        uniform float uNoisy;
        uniform vec4 uColor1;
        varying vec3 vPos, vNor, vaPos;
        void main() {
-         vaPos = aPos;
+          vaPos = aPos;
           float noise = (uNoisy)/100. * noise(aPos.xyz);
           if (noise > .5){
             noise -= .2;
@@ -245,7 +245,7 @@ let vertexShader = `
           if (aPos.z >= .95 || aPos.z <= -.95 || tester == .8){
             noise = 0.;
           }
-          // do weighting function for the noise 
+          // Displaces y position by noise to create dimples
           vec4 pos = uMatrix * vec4(aPos.x, aPos.y + noise, aPos.z, 1.0);
           vec4 nor = vec4(aNor, 0.0) * uInvMatrix;
           vPos = pos.xyz;
@@ -259,6 +259,7 @@ let fragmentShader = `
        varying vec3 vPos, vNor, vaPos; // vNor passed from vertex shader 
        uniform vec3  uCursor;
 
+      //Perlin noise function
       float noise(vec3 point) { float r = 0.; for (int i=0;i<16;i++) {
          vec3 D, p = point + mod(vec3(i,i/4,i/8) , vec3(4.0,2.0,2.0)) +
             1.7*sin(vec3(i,5*i,8*i)), C=floor(p), P=p-C-.5, A=abs(P);
@@ -276,7 +277,7 @@ let fragmentShader = `
       }
 
       
-      vec3 cup_text_red(vec3 pos, vec3 light){
+      vec3 red_base(vec3 pos, vec3 light){
          float n = noise(4.5 * pos);
          vec3 col = light * (n + vec3(.7, n + .4 * n * n, .8 * n ));
          col *= vec3(.5, 1.,1.);
@@ -294,63 +295,58 @@ let fragmentShader = `
          float n = noise(3.5 * pos);
          vec3 col = light * (n + vec3(.5*n, n, .5 +.4));
          col *= vec3(.5, 1.,1.);
-         if (n >= .3){
+         if (n >= .3)
             col = vec3(0.3, .2, 0.);
-         }
-         else if (n >= .2){
+         else if (n >= .2)
             col *= vec3(0., 0.02,.1);
-         }
-         else if (n >= .15){
+         else if (n >= .15)
             col = vec3(0.3, 0., 0.);
-         }
          return col;
       }
 
-      vec3 favCup(vec3 pos, vec3 light){
-         vec3 old = cup_text_red(pos, light);
+      vec3 red_cup(vec3 pos, vec3 light){
+         vec3 col = red_base(pos, light);
          float n = noise(4.5 * pos);
-         vec3 col = vec3(old.x, old.y, old.z);
-         if (n >= .3){
+         // Adding different colors randomly on the surface 
+         if (n >= .3)
             col = vec3(0.3, .2, 0.);
-         }
-         else if (n >= .2){
+         else if (n >= .2)
             col *= vec3(0., 0.02,.1);
-         }
          return 1.2 * col;
       }
 
+  // Sets texture of cup to textures created above
    vec3 cup_text(vec3 pos, vec3 light){
-      vec3 col = favCup(pos,light);
+      vec3 col = red_cup(pos,light);
       //vec3 col = blue_cup(pos,light);
       return col;
    }
 
-
-      void main(void) {
-         vec3 lightsource = uCursor; 
-         vec3 lightCol = vec3(1.); // white
-         vec3 ambient = vec3 (.5);
-         // constants for specular and diffused
+    void main(void) {
+      vec3 lightsource = uCursor; 
+      vec3 lightCol = vec3(1.); // white
+      vec3 ambient = vec3 (.5);
+      /*Implementing phong shading*/
+      // constants for specular and diffused
          float ac = .25;
          float dc = .75;
          float sc = .5;         
-        // diffused light -- dot (normal at point of surface, vector from point to light source)
-            vec3 norm = normalize(vNor);
-            vec3 lightDir = normalize(lightsource);
-            float c = .5 + max(0.0, dot(lightsource, norm));
-            vec3 diff = c * lightCol;
-
-        // specular -- exp(max(dot(R, C),0)k) 
-            vec3 cameraSource = vec3(0.0,0.0,1.0);
-            vec3 viewSource = normalize(cameraSource);
-            vec3 refSource = normalize(reflect(-lightsource, norm)); // reflect direction = 
-            float s = pow(max(dot(viewSource, refSource),0.0), 4.0);
-            s = pow(s, 4.0);
-            vec3 spec = s * lightCol;
-            vec3 lighting = ambient * ac + diff * dc + spec * sc;   
-            vec3 bgCol = vec3 (0.8549019608, 0.9490196078, 1.);
-            vec3 color = cup_text(vaPos, lighting);
-          gl_FragColor = vec4(sqrt(color), uColor.w);
+      // diffused light -- dot (normal at point of surface, vector from point to light source)
+         vec3 norm = normalize(vNor);
+         vec3 lightDir = normalize(lightsource);
+         float c = .5 + max(0.0, dot(lightsource, norm));
+         vec3 diff = c * lightCol;
+      // specular -- exp(max(dot(R, C),0)k) 
+         vec3 cameraSource = vec3(0.0,0.0,1.0);
+         vec3 viewSource = normalize(cameraSource);
+         vec3 refSource = normalize(reflect(-lightsource, norm)); // reflect direction = 
+         float s = pow(max(dot(viewSource, refSource),0.0), 4.0);
+         s = pow(s, 4.0);
+         vec3 spec = s * lightCol;
+         vec3 lighting = ambient * ac + diff * dc + spec * sc;   
+         vec3 bgCol = vec3 (0.8549019608, 0.9490196078, 1.);
+         vec3 color = cup_text(vaPos, lighting);
+        gl_FragColor = vec4(sqrt(color), uColor.w);
        }
     `;
 
@@ -379,9 +375,9 @@ setTimeout(() => {
         case 1: // bottom of cup
           m = mTranslate(0, 0, 1, m);
           break;
-        case 2: 
+        case 2: // inside cylinder
           break;
-        case 3: 
+        case 3: // top ring
           m = mTranslate(0, 0, -0.9999, m);
           break;
       }
