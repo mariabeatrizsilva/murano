@@ -2,7 +2,7 @@
 
 <!-- Controls -->
 <center> 
-   <h3> Play with Dimpled Cup : </h3>
+   <h3> Play with a Murano cup! </h3>
     Rotate x: <input type="number" id="xRot" name="Rotate X" min="-360" max="360" value = "0">
     Rotate y:<input type="number" id="yRot" name="Rotate Y" min="-360" max="360" value = "0">
     Rotate z: <input type="number" id="zRot" name="Rotate Z" min="-360" max="360" value = "0">
@@ -10,12 +10,58 @@
     <br> 
 </center>
 
-<center>
-    <canvas id='canvas1' width=500 height=500></canvas>
-</center>
+
+
+  <style>
+    .flex-parent-element {
+  display: flex;
+  width: 50%;
+}
+.flex-child-element {
+  flex: 1;
+  border: 2px solid blueviolet;
+  margin: 10px;
+}
+
+.flex-child-element:first-child {
+  margin-right: 20px;
+}
+     .cup_text_buttons button {
+        border-radius: 8px;
+        background-color: #c3d8e4; /* Green background */
+        border: 1px solid #bce7ff; /* Green border */
+        color: white; /* White text */
+        padding: 10px 70px; /* Some padding */
+        cursor: pointer; /* Pointer/hand icon */
+        width: 10%; /* Set a width if needed */
+        display: block; /* Make the buttons appear below each other */
+      }
+      .cup_text_buttons button:not(:last-child) {
+        border-bottom: none; /* Prevent double borders */
+      }
+      /* Add a background color on hover */
+      .cup_text_buttons button:hover {
+        background-color: #DAF2FF;
+      }
+  </style>
+
+<div class = "flex-parent-element">
+    <div class="flex-child-element magenta">
+        <div class="cup_text_buttons">
+            <button onclick="toRed()">Red </button>
+            <button onclick="toBlue()">Blue</button>
+            <button onclick="toYel()">Yellow</button>
+        </div>
+    </div>
+    <!-- Centered used to be -->
+    <div class="flex-child-element green">
+        <canvas id='canvas1' width=500 height=500></canvas>
+    </div>
+</div>
+
 
 <center>
    <button onclick="location.href='s1.html'"> The story behind the cup</button>
-   <button onclick="location.href='s1.html'"> Cup Library </button>
+   <button onclick="location.href='cuplib.html'"> Cup Library </button>
     
-<script src="redcup.js"></script>
+<script src="basecup.js"></script>

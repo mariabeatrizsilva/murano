@@ -57,8 +57,24 @@ let mPerspective = (fl, m) => {
 
 /* Handling customizable aspects of cup (i.e. transparency, dimples, etc) */
 var alpha = 0.8; // Controls transparency
-var noisy = 32; // Controls dimpled-ness
 
+var cupText = 1.; // Controls cup color
+function toRed(){
+  cupText = 1.
+}
+function toBlue(){
+  cupText = 2.
+}
+function toYel(){
+  cupText = 3.
+}
+/* <button onclick="toRed()">Red </button>
+<button onclick="toBlue()">Blue</button>
+<button onclick="toYel()">Yellow</button> */
+
+
+
+var noisy = 32; // Controls dimpled-ness
 var noisiness = document.getElementById("noisyN");
 noisiness.addEventListener("input", function () {
   noisy = noisiness.value;
@@ -256,6 +272,7 @@ let vertexShader = `
 let fragmentShader = `
        precision mediump float;
        uniform vec4 uColor;
+       uniform float ucupText;
        varying vec3 vPos, vNor, vaPos; // vNor passed from vertex shader 
        uniform vec3  uCursor;
 
@@ -284,6 +301,18 @@ let fragmentShader = `
          return col;
       }
 
+      vec3 blue_cup(vec3 pos, vec3 light){
+        float n = noise(4. * pos);
+        vec3 col = light * (n + vec3(.5*n, 2. * n, .5));
+        if (n >= .3)
+           col = vec3(0.3, .2, 0.);
+        else if (n >= .2)
+           col *= vec3(0., 0.02,.1);
+        else if (n >= .15)
+           col = vec3(0.3, 0., 0.);
+        return col;
+     }
+
       vec3 red_cup(vec3 pos, vec3 light){
          vec3 col = red_base(pos, light);
          float n = noise(4.5 * pos);
@@ -297,7 +326,10 @@ let fragmentShader = `
 
   // Sets texture of cup to textures created above -- could create multiple textures and switch them here 
    vec3 cup_text(vec3 pos, vec3 light){
-     return red_cup(pos,light);
+    if (ucupText == 1.)
+      return red_cup(pos,light);
+    if (ucupText == 2.)
+      return blue_cup(pos,light);
    }
 
     void main(void) {
@@ -336,6 +368,8 @@ setTimeout(() => {
   let uMatrix = gl.getUniformLocation(gl.program, "uMatrix");
   let uCursor = gl.getUniformLocation(gl.program, "uCursor");
   let uInvMatrix = gl.getUniformLocation(gl.program, "uInvMatrix");
+  let ucupText = gl.getUniformLocation(gl.program, "ucupText");
+
 
   let startTime = Date.now() / 1000;
   setInterval(() => {
@@ -365,6 +399,8 @@ setTimeout(() => {
       gl.uniform1f(uNoisy, noisy);
       gl.uniformMatrix4fv(uMatrix, false, m);
       gl.uniformMatrix4fv(uInvMatrix, false, mInverse(m));
+      gl.uniform1f(ucupText, cupText);
+
 
       let mesh = meshData[n].mesh;
       gl.bufferData(gl.ARRAY_BUFFER, mesh, gl.STATIC_DRAW);
