@@ -7,7 +7,7 @@ class Colorcomputer{
 
 
     public static void main(String[] args){
-         c(17, 56, 29);
+         c(185, 255, 71);
     }
 
 } 

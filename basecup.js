@@ -62,8 +62,12 @@ let mPerspective = (fl, m) => {
 
 /* Handling customizable aspects of cup (i.e. transparency, dimples, etc) */
 var alpha = 0.8; // Controls transparency
+var rotate = false;
+function rotchange(){
+  rotate = !rotate;
+}
 
-var cupText = 5.; // Controls cup color
+var cupText = 4.; // Controls cup color
 function toRed(){
   cupText = 1.
 }
@@ -76,8 +80,11 @@ function toYel(){
 function toBlack(){
   cupText = 4.
 }
-function toGreen(){
-  cupText = 3.
+function toNeonGreen(){
+  cupText = 5.
+}
+function toSeaGreen(){
+  cupText = 6.
 }
 /* <button onclick="toRed()">Red </button>
 <button onclick="toBlue()">Blue</button>
@@ -320,42 +327,76 @@ let fragmentShader = `
         return col;
      }
 
-     vec3 cup_text_yellow(vec3 pos, vec3 light){
+     vec3 yellow_base(vec3 pos, vec3 light){
       float n = noise(4.5 * pos);
-         vec3 col = light * (n + vec3(.8, .3 + .4 * n * n, .8 * n ));
+         vec3 col = light * (n + vec3(.9 , .4 + .4 * n * n, .8 * n ));
          col *= vec3(.5, 1.,1.);
-         return 1.6*col;
-    }
+         return 1.3*col;
+      }
 
-   vec3 yellow_cup(vec3 pos, vec3 light){
-      float n = noise(4.5 * pos);
-      vec3 col = cup_text_yellow(pos, light);
-      if (n >= .3)
-        col *= vec3(0.66,0.215,0.027);
-      else if (n >= .23)
-        col *= vec3(0.06666667, 0.21960784, 0.11372549);
-      else if (n >= .1)
-        col *= vec3(0.66,0.215,0.027);
-      return col;
-   }
+      vec3 yellow_cup(vec3 pos, vec3 light){
+          float n = noise(4.5 * pos);
+          vec3 col = yellow_base(pos, light);
+          if (n >= .3)
+            col *= vec3(0.86,0.1,0.0);
+          else if (n >= .25)
+            col = vec3(0.00, 0.02, 0.04);
+          else if (n >= .15)
+            col *= vec3(0.86,0.215,0.027);
+          return 1.3*col;
+      }
 
-   vec3 cup_text_green(vec3 pos, vec3 light){
-    float n = noise(4.5 * pos);
-    vec3 col = light * (n + vec3(.8 *n, .3 + .4 * n * n, .8 * n ));
-    return 1.6*col;
-  }
+      vec3 neongreen_base(vec3 pos, vec3 light){
+        float n = noise(4.5 * pos);
+        vec3 col = light * vec3(.25 + 0.254902 * n, .6 +  .7 *n , .07 + n * 0.2784314);
+        return col;
+      }
 
-  vec3 green_cup(vec3 pos, vec3 light){
-    float n = noise(4.5 * pos);
-    vec3 col = cup_text_green(pos, light);
-    if (n >= .3)
-      col *= vec3(0.66,0.215,0.027);
-    else if (n >= .23)
-      col *= vec3(0.06666667, 0.21960784, 0.11372549);
-    else if (n >= .1)
-      col *= vec3(0.66,0.215,0.027);
-    return col;
- }
+      vec3 neongreen_cup(vec3 pos, vec3 light){
+        float n = noise(4.5 * pos);
+        vec3 col = neongreen_base(pos, light);
+        if (n >= .34)
+          col *= vec3(.8,0.,0.);
+        else if (n >= .25)
+          col = vec3(0.1, 0.4, 0.5);
+        else if (n >= .2)
+          col *= vec3(0.06666667, 0.06666667, 0.1);
+        else if (n >= .15)
+          col = vec3(0.4,0.2,0.027);
+        return col;
+       }
+
+      vec3 seagreen_base(vec3 pos, vec3 light){
+        float n = noise(5. * pos);
+        vec3 col = light * (vec3(.5 *n + .1 * n * n, .33, .1 + .084* n ));
+        col *= vec3(1.,.8,1.8);
+        return 1.3*col;
+      }
+
+      vec3 seagreen_cup(vec3 pos, vec3 light){
+        float n = noise(4. * pos);
+        vec3 col = seagreen_base(pos, light);
+        if (n >= .3)
+          col = vec3(.2,.15,0.) + col * vec3(.8,.3,0.);
+        else if (n >= .25)
+          col *= vec3(0.9, 0., 0.0);
+        else if (n >= .2)
+          col *= vec3(2.06666667, 0.0, 0.0);
+        return 1.3*col;
+      }
+
+      vec3 black_cup(vec3 pos, vec3 light){
+        float n = noise(4.5 * pos);
+        vec3 col = light * (n*n*n*n*n + vec3(n, n, n));
+        if (n >= .3)
+           col *= vec3(1.9,1.9,1.9);
+        else if (n >= .2)
+           col *= vec3(1.9, .8,.1);
+        else if (n >= .15)
+           col = vec3(0.3, 0., 0.);
+        return col;
+     }
+
 
   // Sets texture of cup to textures created above based on user selection
    vec3 cup_text(vec3 pos, vec3 light){
@@ -365,8 +406,12 @@ let fragmentShader = `
       return blue_cup(pos,light);
     if (ucupText == 3.)
       return yellow_cup(pos,light);
+    if (ucupText == 4.)
+      return black_cup(pos,light);
     if (ucupText == 5.)
-      return green_cup(pos,light);
+      return neongreen_cup(pos,light);
+    if (ucupText == 6.)
+      return seagreen_cup(pos,light);
   }
 
     void main(void) {
@@ -416,7 +461,9 @@ setTimeout(() => {
       let m = mIdentity();
       m = mRotateX(90 + x_amt, m);
       m = mRotateY(y_amt, m);
-      m = mRotateZ(z_amt + time / 4, m);
+      if (rotate){
+        m = mRotateZ(time / 4, m);
+      }
       m = mScale(0.3, 0.3, 0.5, m);
       switch (n) {
         case 0: // main tube
