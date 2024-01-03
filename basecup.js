@@ -1,3 +1,8 @@
+/**
+ * This code was originally written to be a final project for Special Topics: Computer Graphics at NYU.
+ * Setup code provided by Professor Ken Perlin.
+ */
+
 /*
  * Matrix Library
  */
@@ -58,7 +63,7 @@ let mPerspective = (fl, m) => {
 /* Handling customizable aspects of cup (i.e. transparency, dimples, etc) */
 var alpha = 0.8; // Controls transparency
 
-var cupText = 1.; // Controls cup color
+var cupText = 5.; // Controls cup color
 function toRed(){
   cupText = 1.
 }
@@ -66,6 +71,12 @@ function toBlue(){
   cupText = 2.
 }
 function toYel(){
+  cupText = 3.
+}
+function toBlack(){
+  cupText = 4.
+}
+function toGreen(){
   cupText = 3.
 }
 /* <button onclick="toRed()">Red </button>
@@ -285,20 +296,16 @@ let fragmentShader = `
             r+=sin(6.3*dot(P,fract(D)-.5))*pow(max(0.,1.-2.*dot(P,P)),4.);
             } return .5 * sin(r); }
 
-
-      vec3 cup_text_blue(vec3 pos, vec3 light){
-         float n = noise(2. * pos);
-         vec3 col = light * (n + vec3(.5+5.*n, n + .4, .5 +.4));
-         col *= vec3(.5, 1.,1.);
-         return col;
-      }
-
-      
-      vec3 red_base(vec3 pos, vec3 light){
-         float n = noise(4.5 * pos);
-         vec3 col = light * (n + vec3(.7, n + .4 * n * n, .8 * n ));
-         col *= vec3(.5, 1.,1.);
-         return col;
+      vec3 red_cup(vec3 pos, vec3 light){
+        float n = noise(4.5 * pos);
+        vec3 col = light * (n + vec3(.7, n + .4 * n * n, .8 * n ));
+        col *= vec3(.5, 1.,1.);
+         // Adding different colors randomly on the surface to create color splotches
+         if (n >= .3)
+            col = vec3(0.3, .2, 0.);
+         else if (n >= .2)
+            col *= vec3(0., 0.02,.1);
+         return 1.2 * col;
       }
 
       vec3 blue_cup(vec3 pos, vec3 light){
@@ -313,24 +320,54 @@ let fragmentShader = `
         return col;
      }
 
-      vec3 red_cup(vec3 pos, vec3 light){
-         vec3 col = red_base(pos, light);
-         float n = noise(4.5 * pos);
-         // Adding different colors randomly on the surface 
-         if (n >= .3)
-            col = vec3(0.3, .2, 0.);
-         else if (n >= .2)
-            col *= vec3(0., 0.02,.1);
-         return 1.2 * col;
-      }
+     vec3 cup_text_yellow(vec3 pos, vec3 light){
+      float n = noise(4.5 * pos);
+         vec3 col = light * (n + vec3(.8, .3 + .4 * n * n, .8 * n ));
+         col *= vec3(.5, 1.,1.);
+         return 1.6*col;
+    }
 
-  // Sets texture of cup to textures created above -- could create multiple textures and switch them here 
+   vec3 yellow_cup(vec3 pos, vec3 light){
+      float n = noise(4.5 * pos);
+      vec3 col = cup_text_yellow(pos, light);
+      if (n >= .3)
+        col *= vec3(0.66,0.215,0.027);
+      else if (n >= .23)
+        col *= vec3(0.06666667, 0.21960784, 0.11372549);
+      else if (n >= .1)
+        col *= vec3(0.66,0.215,0.027);
+      return col;
+   }
+
+   vec3 cup_text_green(vec3 pos, vec3 light){
+    float n = noise(4.5 * pos);
+    vec3 col = light * (n + vec3(.8 *n, .3 + .4 * n * n, .8 * n ));
+    return 1.6*col;
+  }
+
+  vec3 green_cup(vec3 pos, vec3 light){
+    float n = noise(4.5 * pos);
+    vec3 col = cup_text_green(pos, light);
+    if (n >= .3)
+      col *= vec3(0.66,0.215,0.027);
+    else if (n >= .23)
+      col *= vec3(0.06666667, 0.21960784, 0.11372549);
+    else if (n >= .1)
+      col *= vec3(0.66,0.215,0.027);
+    return col;
+ }
+
+  // Sets texture of cup to textures created above based on user selection
    vec3 cup_text(vec3 pos, vec3 light){
     if (ucupText == 1.)
       return red_cup(pos,light);
     if (ucupText == 2.)
       return blue_cup(pos,light);
-   }
+    if (ucupText == 3.)
+      return yellow_cup(pos,light);
+    if (ucupText == 5.)
+      return green_cup(pos,light);
+  }
 
     void main(void) {
       vec3 lightsource = uCursor; 

@@ -3,11 +3,12 @@
 <!-- Controls -->
 <center> 
    <h3> Play with a Murano cup! </h3>
-    Rotate x: <input type="number" id="xRot" name="Rotate X" min="-360" max="360" value = "0">
+   Rotate x: <input type="number" id="xRot" name="Rotate X" min="-360" max="360" value = "0">
     Rotate y:<input type="number" id="yRot" name="Rotate Y" min="-360" max="360" value = "0">
     Rotate z: <input type="number" id="zRot" name="Rotate Z" min="-360" max="360" value = "0">
     Change Dimpled-ness <input type="number" id="noisyN" name="noisey!!!" min="0" max="1000" value = "37">
     <br> 
+
 </center>
 
   <style>
@@ -29,16 +30,40 @@
         margin-left: 500px;
         
     }
-  
-     .cup_text_buttons button {
+    p1{
+        color: #a5b7c1; 
+        margin-left: 10%;
+    }
+    h3{
+        color: #72828a; 
+    }
+    body{
+        color: #a5b7c1; 
+
+    }
+    button { 
+        text-align: center;
+        color: white; /* White text */
+        background-color: #c3d8e4; /* Green background */
         border-radius: 8px;
         background-color: #c3d8e4; /* Green background */
         border: 1px solid #bce7ff; /* Green border */
         color: white; /* White text */
-        padding: 10px 70px; /* Some padding */
         cursor: pointer; /* Pointer/hand icon */
         width: 10%; /* Set a width if needed */
+    } 
+    button:hover {
+        background-color: #DAF2FF;
+      }
+     .cup_text_buttons button {
+        background-color: #c3d8e4; /* Green background */
+        border: 1px solid bce7ff; /* Green border */
+        color: white; /* White text */
+        padding: 10px 10px; /* Some padding */
+        cursor: pointer; /* Pointer/hand icon */
+        width: 150px; /* Set a width if needed */
         display: block; /* Make the buttons appear below each other */
+        margin-left: 10%;
       }
       .cup_text_buttons button:not(:last-child) {
         border-bottom: none; /* Prevent double borders */
@@ -51,6 +76,7 @@
 <div class = "flex-parent-element">
     <div class="flex-child-element butons">
         <div class="cup_text_buttons">
+            <p1>Change the cup color! </p1>
             <button onclick="toRed()">Red </button>
             <button onclick="toBlue()">Blue</button>
             <button onclick="toYel()">Yellow</button>
