@@ -269,35 +269,22 @@ let fragmentShader = `
             } return .5 * sin(r); }
 
 
-      vec3 cup_text_blue(vec3 pos, vec3 light){
-         float n = noise(2. * pos);
-         vec3 col = light * (n + vec3(.5+5.*n, n + .4, .5 +.4));
-         col *= vec3(.5, 1.,1.);
-         return col;
-      }
-
-      
-      vec3 red_base(vec3 pos, vec3 light){
-         float n = noise(4.5 * pos);
-         vec3 col = light * (n + vec3(.7, n + .4 * n * n, .8 * n ));
-         col *= vec3(.5, 1.,1.);
-         return col;
-      }
-
-      vec3 red_cup(vec3 pos, vec3 light){
-         vec3 col = red_base(pos, light);
-         float n = noise(4.5 * pos);
-         // Adding different colors randomly on the surface 
-         if (n >= .3)
-            col = vec3(0.3, .2, 0.);
-         else if (n >= .2)
-            col *= vec3(0., 0.02,.1);
-         return 1.2 * col;
-      }
+      vec3 blue_cup(vec3 pos, vec3 light){
+        float n = noise(3.5 * pos);
+        vec3 col = light * (n + vec3(.5*n, n, .5 +.4));
+        col *= vec3(.5, 1.,1.);
+        if (n >= .3)
+           col = vec3(0.3, .2, 0.);
+        else if (n >= .2)
+           col *= vec3(0., 0.02,.1);
+        else if (n >= .15)
+           col = vec3(0.3, 0., 0.);
+        return col;
+     }
 
   // Sets texture of cup to textures created above -- could create multiple textures and switch them here 
    vec3 cup_text(vec3 pos, vec3 light){
-     return red_cup(pos,light);
+     return blue_cup(pos,light);
    }
 
     void main(void) {
