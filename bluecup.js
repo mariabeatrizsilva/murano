@@ -268,11 +268,9 @@ let fragmentShader = `
             r+=sin(6.3*dot(P,fract(D)-.5))*pow(max(0.,1.-2.*dot(P,P)),4.);
             } return .5 * sin(r); }
 
-
-      vec3 blue_cup(vec3 pos, vec3 light){
-        float n = noise(3.5 * pos);
-        vec3 col = light * (n + vec3(.5*n, n, .5 +.4));
-        col *= vec3(.5, 1.,1.);
+     vec3 blue_cup(vec3 pos, vec3 light){
+        float n = noise(4. * pos);
+        vec3 col = light * (n + vec3(.5*n, 2. * n, .5));
         if (n >= .3)
            col = vec3(0.3, .2, 0.);
         else if (n >= .2)
