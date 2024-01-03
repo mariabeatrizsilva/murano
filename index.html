@@ -10,22 +10,26 @@
     <br> 
 </center>
 
-
-
   <style>
     .flex-parent-element {
-  display: flex;
-  width: 50%;
-}
-.flex-child-element {
-  flex: 1;
-  border: 2px solid blueviolet;
-  margin: 10px;
-}
-
-.flex-child-element:first-child {
-  margin-right: 20px;
-}
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        /* gap:-100px; */
+       /* justify-content:end; */
+    }
+    .flex-child-element {
+        flex: 1;
+        margin: auto;
+    }
+    .flex-child-element:first-child {
+        margin-right: -500px;
+    }
+    .flex-child-element:buttons{
+        margin-left: 500px;
+        
+    }
+  
      .cup_text_buttons button {
         border-radius: 8px;
         background-color: #c3d8e4; /* Green background */
@@ -44,24 +48,25 @@
         background-color: #DAF2FF;
       }
   </style>
-
 <div class = "flex-parent-element">
-    <div class="flex-child-element magenta">
+    <div class="flex-child-element butons">
         <div class="cup_text_buttons">
             <button onclick="toRed()">Red </button>
             <button onclick="toBlue()">Blue</button>
             <button onclick="toYel()">Yellow</button>
+            <button onclick="toBlack()">Black</button>
+            <button onclick="toGreen()">Green</button>
+            <!-- <button onclick="toBlue()">Blue</button> -->
         </div>
     </div>
     <!-- Centered used to be -->
-    <div class="flex-child-element green">
+    <div class="flex-child-element canvas">
         <canvas id='canvas1' width=500 height=500></canvas>
     </div>
 </div>
 
-
 <center>
    <button onclick="location.href='s1.html'"> The story behind the cup</button>
-   <button onclick="location.href='cuplib.html'"> Cup Library </button>
+   <!-- <button onclick="location.href='cuplib.html'"> Cup Library </button> -->
     
 <script src="basecup.js"></script>
