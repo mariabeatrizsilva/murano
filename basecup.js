@@ -62,7 +62,7 @@ let mPerspective = (fl, m) => {
 
 /* Handling customizable aspects of cup (i.e. transparency, dimples, etc) */
 var alpha = 0.8; // Controls transparency
-var rotate = false;
+var rotate = true;
 function rotchange(){
   rotate = !rotate;
 }
