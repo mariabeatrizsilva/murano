@@ -4,7 +4,7 @@
  */
 
 /*
- * Matrix Library
+ *  Matrix Library
  */
 let mIdentity = () => [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 let mInverse = (m) => {
@@ -67,7 +67,7 @@ function rotchange(){
   rotate = !rotate;
 }
 
-var cupText = 4.; // Controls cup color
+var cupText = 8.; // Controls cup color
 function toRed(){
   cupText = 1.
 }
@@ -86,11 +86,15 @@ function toNeonGreen(){
 function toSeaGreen(){
   cupText = 6.
 }
-/* <button onclick="toRed()">Red </button>
-<button onclick="toBlue()">Blue</button>
-<button onclick="toYel()">Yellow</button> */
+function toOrange(){
+  cupText = 7.
+}
+function toBabyBlue(){
+  cupText = 8.
+}
 
 
+let colors = []; 
 
 var noisy = 32; // Controls dimpled-ness
 var noisiness = document.getElementById("noisyN");
@@ -348,7 +352,7 @@ let fragmentShader = `
 
       vec3 neongreen_base(vec3 pos, vec3 light){
         float n = noise(4.5 * pos);
-        vec3 col = light * vec3(.25 + 0.254902 * n, .6 +  .7 *n , .07 + n * 0.2784314);
+        vec3 col = light * vec3(.29 + 0.254902 * n, .6 +  .7 *n , .07 + n * 0.2784314);
         return col;
       }
 
@@ -397,6 +401,45 @@ let fragmentShader = `
         return col;
      }
 
+     vec3 orange_base(vec3 pos, vec3 light){
+      float n = noise(4.5 * pos);
+         vec3 col = light * (n + vec3(1. , .2 + .4 * n * n, .8 * n ));
+         col *= vec3(.5, 1.,1.);
+         return 1.3*col;
+      }
+
+      vec3 babyblue_base(vec3 pos, vec3 light){
+        float n = noise(4.5 * pos);
+        vec3 col = light * vec3(.29 + 0.254902 * n, .6 +  .7 *n , .8 + n * 0.2784314);
+        return col;
+      }
+
+      vec3 babyblue_cup(vec3 pos, vec3 light){
+        float n = noise(4.5 * pos);
+        vec3 col = babyblue_base(pos, light);
+        if (n >= .34)
+          col *= vec3(.8,0.,0.);
+        else if (n >= .25)
+          col *= vec3(0, 0., 0.2);
+        else if (n >= .2)
+          col *= vec3(0.06666667, 0.06666667, 0.1);
+        else if (n >= .15)
+          col = vec3(0.4,0.2,0.027);
+        return .9*col;
+       }
+      
+     vec3 orange_cup(vec3 pos, vec3 light){
+      float n = noise(4.3 * pos);
+          vec3 col = orange_base(pos, light);
+          if (n >= .3)
+            col *= vec3(.5);
+          else if (n >= .25)
+            col = vec3(0.00, 0.02, 0.04);
+          else if (n >= .15)
+            col *= vec3(0.86,0.215,0.027);
+      return 1.3*col;
+   }
+
 
   // Sets texture of cup to textures created above based on user selection
    vec3 cup_text(vec3 pos, vec3 light){
@@ -412,6 +455,10 @@ let fragmentShader = `
       return neongreen_cup(pos,light);
     if (ucupText == 6.)
       return seagreen_cup(pos,light);
+    if (ucupText == 7.)
+      return orange_cup(pos,light);
+    if (ucupText == 8.)
+      return babyblue_cup(pos,light);
   }
 
     void main(void) {
@@ -477,7 +524,7 @@ setTimeout(() => {
           m = mTranslate(0, 0, -0.9999, m);
           break;
       }
-
+      
       gl.uniform4fv(uColor, meshData[n].color);
       gl.uniform4fv(uColor1, meshData[n].color);
       gl.uniform1f(uNoisy, noisy);
