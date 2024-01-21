@@ -2,17 +2,70 @@
 
 <!-- Controls -->
 <center> 
+    
    <h3> Play with a Murano cup! </h3>
+
+<div class="popup" onclick="popUp()"> Click for Instructions!
+    <span class="popuptext" id="myPopup"> Hi! Welcome to the Murano cup simulator. Move your mouse to change the souce of the lighting. Use the controls to rotate the cup by the x or y axis (you can manually type in values or use your arrow keys). You can also  change how dimpled the cup is and explore the different colored cups that have been modeled. Enjoy! </span>
+  </div>
+  <br>
+  <br>
+
    Rotate x: <input type="number" id="xRot" name="Rotate X" min="-360" max="360" value = "0">
     Rotate y:<input type="number" id="yRot" name="Rotate Y" min="-360" max="360" value = "0">
-    Rotate z: <input type="number" id="zRot" name="Rotate Z" min="-360" max="360" value = "0">
+    <!-- Rotate z: <input type="number" id="zRot" name="Rotate Z" min="-360" max="360" value = "0"> -->
     Change Dimpled-ness <input type="number" id="noisyN" name="noisey!!!" min="0" max="1000" value = "37">
     <button onclick="rotchange()">Start/Stop Rotate </button>
     <br> 
 
 </center>
 
+
+  <script>
+    // When the user clicks on <div>, open the popup
+    function popUp() {
+      var popup = document.getElementById("myPopup");
+      popup.classList.toggle("show");
+    }
+    </script>
+
   <style>
+    /* Popup container */
+.popup {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+/* The actual popup (appears on top) */
+    .popup .popuptext {
+    visibility: hidden;
+    width: 550px;
+    background-color: rgb(57, 95, 246);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px 5px;
+    position: absolute;
+    z-index: 1;
+    top: 10%;
+    left: -90%;
+    margin-left: -80px;
+    }
+
+    /* Toggle this class when clicking on the popup container (hide and show the popup) */
+    .popup .show {
+    visibility: visible;
+    -webkit-animation: fadeIn 1s;
+    animation: fadeIn 1s
+    }
+
+    /* Add animation (fade in the popup) */
+    @-webkit-keyframes fadeIn {
+    from {opacity: 0;} 
+    to {opacity: 1;}
+    }
+
     .flex-parent-element {
         display: flex;
         width: 100%;

@@ -67,7 +67,7 @@ function rotchange(){
   rotate = !rotate;
 }
 
-var cupText = 8.; // Controls cup color
+var cupText = 1.; // Controls cup color
 function toRed(){
   cupText = 1.
 }
@@ -119,11 +119,11 @@ y_rotation.addEventListener("input", function () {
   console.log(y_amt);
 });
 
-var z_rotation = document.getElementById("zRot");
-z_rotation.addEventListener("input", function () {
-  z_amt = z_rotation.value / 10;
-  console.log(z_amt);
-});
+// var z_rotation = document.getElementById("zRot");
+// z_rotation.addEventListener("input", function () {
+//   z_amt = z_rotation.value / 10;
+//   console.log(z_amt);
+// });
 
 /* Setting up WebGL */
 let start_gl = (canvas, meshData, vertexSize, vertexShader, fragmentShader) => {
