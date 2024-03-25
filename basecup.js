@@ -310,8 +310,8 @@ let fragmentShader = `
       vec3 red_cup(vec3 pos, vec3 light){
         float n = noise(4.5 * pos);
         vec3 col = light * (n + vec3(.7, n + .4 * n * n, .8 * n ));
-        col *= vec3(.5, 1.,1.);
-         // Adding different colors randomly on the surface to create color splotches
+        col *= vec3(.8, 1.,1.);
+        //  // Adding different colors randomly on the surface to create color splotches
          if (n >= .3)
             col = vec3(0.3, .2, 0.);
          else if (n >= .2)
